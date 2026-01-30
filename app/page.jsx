@@ -23,7 +23,7 @@ export default function LoginPage() {
           body: JSON.stringify({ email, password }),
         }
       );
-
+      
       const data = await res.json();
 
       if (!res.ok) {
@@ -33,6 +33,10 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.token);
       alert("Login successful!");
+       
+
+      // ✅ REDIRECT TO DASHBOARD
+      router.push("/dashboard");
       console.log("User:", data.user);
 
     } catch (err) {
