@@ -1,0 +1,141 @@
+@import "tailwindcss";
+/* Container */
+.signup-container {
+  min-height: 100vh; /* full height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9fafb; /* lighter background like in the screenshot */
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+/* Card */
+.signup-card {
+  background-color: #ffffff;
+  padding: 32px 28px;
+  border-radius: 12px; /* slightly more rounded */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Logo */
+.logo {
+  background-color: #50ae73;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 24px;
+  margin-bottom: 18px;
+  font-weight: bold;
+}
+
+/* Headings */
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+/* Form */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+.signup-form label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  text-align: left;
+  margin-bottom: 6px;
+}
+
+/* Name fields side by side */
+.name-fields {
+  display: flex;
+  gap: 40px; /* slightly bigger gap */
+  margin-bottom: 9px;
+}
+
+.name-fields input {
+  flex: 1;
+}
+
+/* Inputs */
+.signup-form input {
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 16px;
+  transition: all 0.2s ease-in-out;
+}
+
+.signup-form input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+/* Button */
+.signup-form button {
+  padding: 12px;
+  background-color: #59d085;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.signup-form button:hover {
+  background-color: #16a34a;
+}
+
+/* Login link */
+.login-link {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.login-link a {
+  color: #22c55e;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-in-out;
+}
