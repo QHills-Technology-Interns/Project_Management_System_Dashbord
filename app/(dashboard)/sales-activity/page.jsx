@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SalesActivityPage() {
+  const router = useRouter();
+  const [token, setToken] = useState(null);
+
   const [formData, setFormData] = useState({
     deal_id: "",
     sales_rep_id: "",
@@ -13,50 +17,61 @@ export default function SalesActivityPage() {
     outcome: "",
     next_follow_up: "",
   });
-   const token = localStorage.getItem("token");
-    if (!token) {
+
+  // ✅ SAFE localStorage access
+  useEffect(() => {
+    const t = localStorage.getItem("token");
+    if (!t) {
       alert("Session expired. Please login again.");
       router.push("/login");
-      return;
+    } else {
+      setToken(t);
     }
+  }, [router]);
+
+  // ⏳ Prevent render until token exists
+  if (!token) return <p>Loading...</p>;
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const payload = {
-    deal_id:"29d9887b-f379-491e-83eb-a81dd47ca6a3",
-    sales_rep_id: "0a130306-9ef8-4bc4-96af-2669c110dade",
-    activity_type: formData.activity_type,
-    activity_date: formData.activity_date,
-    duration_minutes: formData.duration_minutes || null,
-    notes: formData.notes || null,
-    outcome: formData.outcome || null,
-    next_follow_up_date: formData.next_follow_up || null
+    const payload = {
+      deal_id: "29d9887b-f379-491e-83eb-a81dd47ca6a3",
+      sales_rep_id: "0a130306-9ef8-4bc4-96af-2669c110dade",
+      activity_type: formData.activity_type,
+      activity_date: formData.activity_date,
+      duration_minutes: formData.duration_minutes || null,
+      notes: formData.notes || null,
+      outcome: formData.outcome || null,
+      next_follow_up_date: formData.next_follow_up || null,
+    };
+
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/sales-activities",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      alert("Sales Activity created successfully ✅");
+    } catch (error) {
+      console.error(error);
+      alert(error.message || "Failed to create Sales Activity ❌");
+    }
   };
-
-  try {
-    const res = await fetch("http://localhost:5000/api/sales-activities", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}` ,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message);
-
-    alert("Sales Activity created successfully ✅");
-  } catch (error) {
-    console.error(error);
-    alert(error.message || "Failed to create Sales Activity ❌");
-  }
-};
 
 
   const inputClass =
