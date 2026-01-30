@@ -12,7 +12,7 @@ import {
   Handshake
 } from "lucide-react";
 
-const API = "http://localhost:5000/api/dashboard";
+const API = "https://ceo-dashboard-z65r.onrender.com/api/dashboard";
 
 export default function DashboardPage() {
   const [overview, setOverview] = useState(null);

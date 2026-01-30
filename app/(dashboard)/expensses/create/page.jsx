@@ -38,7 +38,7 @@ export default function CreateExpense() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/expenses", {
+    const res = await fetch("https://ceo-dashboard-z65r.onrender.com/api/expenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

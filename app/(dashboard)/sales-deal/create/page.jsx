@@ -80,7 +80,7 @@ export default function CreateSalesDeal() {
       next_action_date: form.next_action_date || null
     };
 
-    const res = await fetch("http://localhost:5000/api/sales-deal", {
+    const res = await fetch("https://ceo-dashboard-z65r.onrender.com/api/sales-deal", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

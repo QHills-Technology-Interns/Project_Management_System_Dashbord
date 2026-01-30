@@ -1,56 +1,80 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import Link from "next/link";
-import { fetchWithAuth } from "@/lib/api";
+import './login.css'
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-export default function SalesTeamPage() {
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
-  useEffect(() => {
-    fetchWithAuth("/sales-team")
-      .then(res => {
-        if (res.success) {
-          setMembers(res.data);
+    try {
+      const res = await fetch(
+        "https://ceo-dashboard-z65r.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         }
-        setLoading(false);
-      });
-  }, []);
+      );
 
-  if (loading) return <p className="p-6">Loading...</p>;
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login failed");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      alert("Login successful!");
+      console.log("User:", data.user);
+
+    } catch (err) {
+      console.error(err);
+      setError("Server not reachable");
+    }
+  };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-bold">Sales Team</h1>
-        <Link
-          href="/sales-team/create"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          + Add Member
-        </Link>
-      </div>
+    <div className="login-wrapper">
+      <div className="login-card">
+        <div className="logo">⚡ Acme</div>
 
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2">Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>City</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map(m => (
-            <tr key={m.id} className="border-t">
-              <td className="p-2">{m.employee_name}</td>
-              <td>{m.email}</td>
-              <td>{m.role}</td>
-              <td>{m.city}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <h1>Welcome back</h1>
+        <p className="subtitle">Sign in to your account to continue</p>
+
+        <form onSubmit={handleLogin}>
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button type="submit">Sign in</button>
+        </form>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <p className="footer">
+          Don&apos;t have an account? <Link href="/signup">Create one</Link>
+        </p>
+      </div>
     </div>
   );
 }

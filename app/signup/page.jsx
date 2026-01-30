@@ -14,7 +14,8 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-const res = await fetch("http://localhost:5000/api/auth/signup", {
+const res = await fetch(
+        "https://ceo-dashboard-z65r.onrender.com/api/auth/signup", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -96,7 +97,7 @@ const res = await fetch("http://localhost:5000/api/auth/signup", {
 
         <p className="login-link">
           Already have an account?{" "}
-          <Link href="/login">Sign in</Link>
+          <Link href="/">Sign in</Link>
         </p>
       </div>
 

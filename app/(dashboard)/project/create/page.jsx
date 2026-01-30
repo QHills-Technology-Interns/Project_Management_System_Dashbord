@@ -43,7 +43,7 @@ const handleSubmit = async (e) => {
 
   try {
     const res = await axios.post(
-      "http://localhost:5000/api/projects",
+      "https://ceo-dashboard-z65r.onrender.com/api/projects",
       payload,
       {
         headers: {

@@ -52,7 +52,7 @@ export default function SalesActivityPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/sales-activities",
+      "https://ceo-dashboard-z65r.onrender.com/api/sales-activities",
         {
           method: "POST",
           headers: {

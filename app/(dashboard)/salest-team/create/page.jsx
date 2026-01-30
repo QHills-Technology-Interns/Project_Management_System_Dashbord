@@ -50,7 +50,7 @@ export default function CreateSalesTeam() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/sales-team",
+        "https://ceo-dashboard-z65r.onrender.com/api/sales-team",
         form,
         { headers: { 
            Authorization: `Bearer ${token}`,
