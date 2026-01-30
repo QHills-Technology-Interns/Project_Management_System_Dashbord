@@ -26,34 +26,41 @@ export default function CreateProject() {
     priority: "Medium",
     geography: "",
   });
+const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    if (!token) return router.push("/login");
-
-    const payload = {
-      ...form,
-      total_budget: form.total_budget ? Number(form.total_budget) : null,
-      total_cost_to_date: form.total_cost_to_date ? Number(form.total_cost_to_date) : null,
-      total_revenue: form.total_revenue ? Number(form.total_revenue) : null,
-      progress_percentage: Number(form.progress_percentage) || 0,
-    };
-
-    try {
-      await axios.post("http://localhost:5000/api/projects", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Project created successfully 🚀");
-      router.push("/projects");
-    } catch {
-      alert("Failed to create project");
-    }
+  const payload = {
+    ...form,
+    total_budget: Number(form.total_budget) || 0,
+    total_cost_to_date: Number(form.total_cost_to_date) || 0,
+    total_revenue: Number(form.total_revenue) || 0,
+    progress_percentage: Number(form.progress_percentage) || 0,
   };
+
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/projects",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    alert("Project created successfully 🚀");
+    // router.push("/projects");
+  } catch (error) {
+    console.error("ERROR:", error.response?.data || error.message);
+    alert(error.response?.data?.message || "Failed to create project");
+  }
+};
+
 
   const input =
     "w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none";
