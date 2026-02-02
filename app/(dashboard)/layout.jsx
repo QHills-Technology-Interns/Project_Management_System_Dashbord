@@ -55,58 +55,59 @@ export default function DashboardLayout({ children }) {
   }, [pathname]);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
 
-      {/* Overlay (mobile) */}
-      <div
-        className={`fixed inset-0 bg-black/30 z-20 lg:hidden ${
-          sidebarOpen ? "block" : "hidden"
-        }`}
-        onClick={() => setSidebarOpen(false)}
-      />
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-30 inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform
+        className={`fixed z-30 inset-y-0 left-0 w-64 bg-white border-r transform transition-transform
         lg:relative lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-  <Link href="/dashboard" className="font-bold text-lg hover:text-blue-600">
-    PMS
-  </Link>
-  <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
-    <X size={20} />
-  </button>
-</div>
+        {/* Logo */}
+        <div className="flex items-center justify-between px-5 py-4 border-b">
+          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+            <div className="w-9 h-9 bg-emerald-600 text-white rounded-full flex items-center justify-center">
+              BM
+            </div>
+            BusinessManager
+          </Link>
+
+          <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+            <X size={20} />
+          </button>
+        </div>
 
         {/* Navigation */}
-        <nav className="p-2 space-y-2">
+        <nav className="p-3 space-y-2">
           {navItems.map((menu, index) => {
             const isOpen = openMenu === index;
 
             return (
               <div key={index}>
-                {/* Parent Menu */}
                 <button
                   onClick={() => setOpenMenu(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100"
+                  className="flex w-full items-center justify-between px-3 py-2 rounded-lg
+                  text-gray-700 hover:bg-gray-100"
                 >
                   <div className="flex items-center gap-3">
                     <menu.icon size={18} />
-                  <span className="font-medium text-lg">{menu.label}</span>
+                    <span className="font-medium">{menu.label}</span>
                   </div>
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
-                {/* Submenu */}
                 {isOpen && (
                   <div className="ml-8 mt-1 space-y-1">
                     {menu.children.map((item, i) => {
@@ -115,12 +116,12 @@ export default function DashboardLayout({ children }) {
                         <Link
                           key={i}
                           href={item.href}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-md text-base
-                            ${
-                              isActive
-                                ? "bg-blue-100 text-blue-600 font-medium"
-                                : "text-gray-600 hover:bg-gray-100"
-                            }`}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                          ${
+                            isActive
+                              ? "bg-emerald-100 text-emerald-700 font-medium"
+                              : "text-gray-600 hover:bg-gray-100"
+                          }`}
                         >
                           <item.icon size={14} />
                           {item.label}
@@ -135,37 +136,46 @@ export default function DashboardLayout({ children }) {
         </nav>
       </aside>
 
-      {/* Main Section */}
+      {/* Main Area */}
       <div className="flex-1 flex flex-col">
 
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-gray-900 shadow">
+        <header className="sticky top-0 z-10 bg-white border-b">
           <div className="flex items-center justify-between px-6 py-3">
             <div className="flex items-center gap-4">
               <button
-                className="lg:hidden p-2 rounded bg-white/20 text-white"
+                className="lg:hidden p-2 rounded-md bg-gray-100"
                 onClick={() => setSidebarOpen(true)}
               >
                 <Menu size={20} />
               </button>
-              <h1 className="text-white text-xl font-semibold">
-                Project Management System
+              <h1 className="text-lg font-semibold text-gray-800">
+                Dashboard
               </h1>
             </div>
 
-            <div className="flex items-center gap-4 text-white">
-              <button className="px-3 py-1 rounded bg-white/20 text-sm">
+            <div className="flex items-center gap-4">
+              <button className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium">
                 + New Project
               </button>
-              <div className="w-8 h-8 bg-white text-blue-600 font-bold flex items-center justify-center rounded-full">
-                P
+
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">
+                  JD
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-sm font-medium">John Doe</p>
+                  <p className="text-xs text-gray-500">CEO</p>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        {/* Content */}
+        <main className="flex-1 p-6 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   );
