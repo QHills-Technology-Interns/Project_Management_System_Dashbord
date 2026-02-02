@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+
 import './login.css'
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -44,7 +47,12 @@ export default function LoginPage() {
       setError("Server not reachable");
     }
   };
+  
+  const router = useRouter(); // ✅ DEFINE ROUTER
 
+  const handleClick = () => {
+    router.push("/dashboard");
+  };
   return (
     <div className="login-wrapper">
       <div className="login-card">
@@ -70,7 +78,7 @@ export default function LoginPage() {
             required
           />
 
-          <button type="submit">Sign in</button>
+          <button type="submit" onClick={handleClick}>Sign in</button>
         </form>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
@@ -81,4 +89,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+  }
