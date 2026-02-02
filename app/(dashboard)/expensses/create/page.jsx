@@ -20,6 +20,8 @@ export default function CreateExpense() {
     notes: "",
   });
 
+  /* ================= HANDLERS ================= */
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     setForm((prev) => ({
@@ -28,61 +30,67 @@ export default function CreateExpense() {
     }));
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Please login first");
-    return;
-  }
-
-  try {
-    const res = await fetch("https://ceo-dashboard-z65r.onrender.com/api/expenses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Failed to create expense");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
       return;
     }
 
-    // ✅ SUCCESS ALERT
-    alert("✅ Expense created successfully!");
+    try {
+      const res = await fetch(
+        "https://ceo-dashboard-z65r.onrender.com/api/expenses",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
-    // ✅ OPTIONAL: clear form after success
-    setForm({
-      ...form,
-      expense_category: "",
-      expense_description: "",
-      expense_date: "",
-      amount: "",
-      vendor_name: "",
-      payment_status: "Pending",
-      notes: "",
-    });
+      const data = await res.json();
 
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
-  }
-};
+      if (!res.ok) {
+        alert(data.message || "Failed to create expense");
+        return;
+      }
 
+      alert("✅ Expense created successfully!");
+
+      // ✅ RESET FORM (INCLUDING PAYMENT STATUS)
+      setForm({
+        project_id: form.project_id,
+        expense_category: "",
+        expense_description: "",
+        expense_date: "",
+        amount: "",
+        currency: "INR",
+        vendor_name: "",
+        payment_status: "Pending",
+        notes: "",
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+
+  /* ================= STYLES ================= */
 
   const input =
-    "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none";
-  const label = "text-sm font-medium text-gray-700";
+    "w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none bg-white";
+
+  const label = "block mb-1 text-sm font-semibold text-gray-700";
+
+  /* ================= UI ================= */
 
   return (
     <div className="min-h-screen bg-gray-50 p-10">
-      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-sm none p-10">
+      <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow p-10">
 
         {/* HEADER */}
         <div className="flex items-center justify-between mb-10">
@@ -94,7 +102,7 @@ export default function CreateExpense() {
           </div>
 
           <span className="px-4 py-2 rounded-full bg-green-50 text-green-700 text-sm font-semibold">
-            ✨ Project Management System
+            Project Management System
           </span>
         </div>
 
@@ -103,14 +111,13 @@ export default function CreateExpense() {
           {/* ROW 1 */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className={label}>
-                Expense Category <span className="text-red-500">*</span>
-              </label>
+              <label className={label}>Expense Category *</label>
               <select
                 name="expense_category"
                 value={form.expense_category}
                 onChange={handleChange}
                 className={input}
+                required
               >
                 <option value="">Select category</option>
                 {[
@@ -127,9 +134,7 @@ export default function CreateExpense() {
             </div>
 
             <div>
-              <label className={label}>
-                Expense Date <span className="text-red-500">*</span>
-              </label>
+              <label className={label}>Expense Date *</label>
               <input
                 type="date"
                 name="expense_date"
@@ -144,9 +149,7 @@ export default function CreateExpense() {
           {/* ROW 2 */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className={label}>
-                Amount <span className="text-red-500">*</span>
-              </label>
+              <label className={label}>Amount *</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 bg-green-100 text-green-700 rounded-full px-2 py-1 text-sm">
                   ₹
@@ -157,6 +160,7 @@ export default function CreateExpense() {
                   value={form.amount}
                   onChange={handleChange}
                   placeholder="0.00"
+                  required
                   className="pl-12 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
@@ -170,7 +174,7 @@ export default function CreateExpense() {
                 onChange={handleChange}
                 className={input}
               >
-                <option value="INR">IN · INR (₹)</option>
+                <option value="INR">INR (₹)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
               </select>
@@ -179,55 +183,51 @@ export default function CreateExpense() {
 
           {/* VENDOR */}
           <div>
-            <label className={label}>
-              Vendor Name <span className="text-gray-400">(Optional)</span>
-            </label>
+            <label className={label}>Vendor Name</label>
             <input
               name="vendor_name"
               value={form.vendor_name}
               onChange={handleChange}
-              placeholder="Enter vendor or company name..."
+              placeholder="Enter vendor or company name"
               className={input}
             />
           </div>
 
           {/* PAYMENT STATUS */}
-      
+          <div>
+            <label className={label}>Payment Status</label>
 
-<div>
-  <label className={label}>Payment Status</label>
+            <div className="flex gap-3 mt-3 flex-wrap">
+              {STATUS.map((s) => {
+                const isActive = form.payment_status === s;
 
-  <div className="flex gap-3 mt-3 flex-wrap">
-    {STATUS.map((s) => {
-      const isActive = form.payment_status === s;
-
-      return (
-        <button
-          key={s}
-          type="button"
-          onClick={() =>
-            setForm((p) => ({ ...p, payment_status: s }))
-          }
-          className={`inline-flex w-auto items-center justify-center px-5 py-2 rounded-xl text-sm font-semibold border transition
-            ${
-              isActive
-                ? s === "Paid"
-                  ? "bg-green-100 text-green-700 border-green-300"
-                  : s === "Rejected"
-                  ? "bg-red-100 text-red-600 border-red-300"
-                  : s === "Cancelled"
-                  ? "bg-gray-100 text-gray-700 border-gray-300"
-                  : "bg-yellow-100 text-yellow-700 border-yellow-300"
-                : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-            }`}
-        >
-          {s}
-        </button>
-      );
-    })}
-  </div>
-</div>
-
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() =>
+                      setForm((p) => ({ ...p, payment_status: s }))
+                    }
+                    className={`inline-flex items-center justify-center px-5 py-2 rounded-xl text-sm font-semibold border transition
+                      ${
+                        isActive
+                          ? s === "Paid"
+                            ? "bg-green-100 text-green-700 border-green-300"
+                            : s === "Rejected"
+                            ? "bg-red-100 text-red-600 border-red-300"
+                            : s === "Cancelled"
+                            ? "bg-gray-100 text-gray-700 border-gray-300"
+                            : "bg-yellow-100 text-yellow-700 border-yellow-300"
+                          : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+                      }`}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* DESCRIPTION */}
           <div>
@@ -243,9 +243,7 @@ export default function CreateExpense() {
 
           {/* NOTES */}
           <div>
-            <label className={label}>
-              Notes <span className="text-gray-400">(Optional)</span>
-            </label>
+            <label className={label}>Notes</label>
             <textarea
               name="notes"
               value={form.notes}
@@ -261,11 +259,14 @@ export default function CreateExpense() {
               type="button"
               onClick={() =>
                 setForm({
-                  ...form,
+                  project_id: form.project_id,
                   expense_category: "",
-                  amount: "",
+                  expense_description: "",
                   expense_date: "",
+                  amount: "",
+                  currency: "INR",
                   vendor_name: "",
+                  payment_status: "Pending",
                   notes: "",
                 })
               }
@@ -276,7 +277,7 @@ export default function CreateExpense() {
 
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold"
             >
               Submit Expense →
             </button>
