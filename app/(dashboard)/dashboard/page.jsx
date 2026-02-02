@@ -167,14 +167,7 @@ export default function DashboardPage() {
     />
   </div>
 </Card>
-<Card title="Quick Insights">
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <Stat label="Avg ROI" value={`${overview.financial.avg_roi}%`} />
-    <Stat label="Profit Margin" value={`${overview.financial.profit_margin}%`} />
-    <Stat label="Deals Closed" value={sales.metrics.closed_deals} />
-    <Stat label="At Risk Projects" value={projectHealth.at_risk_projects.length} danger />
-  </div>
-</Card>
+
 
       {/* ALERTS */}
       {projectHealth.at_risk_projects.length > 0 && (
