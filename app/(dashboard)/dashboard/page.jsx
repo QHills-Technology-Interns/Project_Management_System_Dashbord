@@ -86,46 +86,62 @@ export default function DashboardPage() {
       </div>
 
       {/* PROJECT HEALTH */}
-    <Card title="Project Status">
-  <div className="space-y-4">
-    <ProgressRow
-      label="Completed"
-      value={projectHealth.timeline_status.on_time}
-      total={overview.projects.total}
-      color="bg-emerald-500"
-    />
-    <ProgressRow
-      label="In Progress"
-      value={overview.projects.in_progress}
-      total={overview.projects.total}
-      color="bg-teal-500"
-    />
-    <ProgressRow
-      label="Planning"
-      value={projectHealth.progress_metrics.near_completion}
-      total={overview.projects.total}
-      color="bg-amber-500"
-    />
-    <ProgressRow
-      label="Delayed"
-      value={projectHealth.timeline_status.delayed}
-      total={overview.projects.total}
-      color="bg-red-500"
-    />
-  </div>
-</Card>
+  
+ <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
+  {/* PROJECT STATUS */}
+  <Card title="Project Status">
+    <div className="space-y-4">
+      <ProgressRow
+        label="Completed"
+        value={projectHealth.timeline_status.on_time}
+        total={overview.projects.total}
+        color="bg-emerald-500"
+      />
+      <ProgressRow
+        label="In Progress"
+        value={overview.projects.in_progress}
+        total={overview.projects.total}
+        color="bg-teal-500"
+      />
+      <ProgressRow
+        label="Planning"
+        value={projectHealth.progress_metrics.near_completion}
+        total={overview.projects.total}
+        color="bg-amber-500"
+      />
+      <ProgressRow
+        label="Delayed"
+        value={projectHealth.timeline_status.delayed}
+        total={overview.projects.total}
+        color="bg-red-500"
+      />
+    </div>
+  </Card>
 
-      {/* SALES */}
-      <Card title="Sales Performance">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Stat label="Total Deal Value" value={`₹${sales.metrics.total_deals_value.toLocaleString()}`} />
-          <Stat label="Win Rate" value={`${sales.metrics.win_rate}%`} />
-          <Stat label="Avg Deal Size" value={`₹${sales.metrics.average_deal_size}`} />
-          <Stat label="Expected Revenue" value={`₹${sales.metrics.expected_revenue.toLocaleString()}`} />
-        </div>
-      </Card>
+  {/* SALES PERFORMANCE */}
+  <Card title="Sales Performance">
+    <div className="grid grid-cols-2 gap-4">
+      <Stat
+        label="Total Deal Value"
+        value={`₹${sales.metrics.total_deals_value.toLocaleString()}`}
+      />
+      <Stat
+        label="Win Rate"
+        value={`${sales.metrics.win_rate}%`}
+      />
+      <Stat
+        label="Avg Deal Size"
+        value={`₹${sales.metrics.average_deal_size}`}
+      />
+      <Stat
+        label="Expected Revenue"
+        value={`₹${sales.metrics.expected_revenue.toLocaleString()}`}
+      />
+    </div>
+  </Card>
 
+</div>
       {/* PAYMENTS */}
    <Card title="Payment Status" icon={FileText}>
   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
