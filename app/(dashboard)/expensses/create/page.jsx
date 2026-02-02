@@ -192,34 +192,42 @@ export default function CreateExpense() {
           </div>
 
           {/* PAYMENT STATUS */}
-          <div>
-            <label className={label}>Payment Status</label>
-            <div className="flex gap-4 mt-3 flex-wrap">
-              {STATUS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() =>
-                    setForm((p) => ({ ...p, payment_status: s }))
-                  }
-                  className={`px-6 py-2 rounded-xl text-sm font-semibold border transition
-                    ${
-                      form.payment_status === s
-                        ? s === "Paid"
-                          ? "bg-green-100 text-green-700 border-green-300"
-                          : s === "Rejected"
-                          ? "bg-red-100 text-red-600 border-red-300"
-                          : s === "Cancelled"
-                          ? "bg-gray-100 text-gray-700 border-gray-300"
-                          : "bg-yellow-100 text-yellow-700 border-yellow-300"
-                        : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-                    }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
+        const STATUS = ["Paid", "Pending", "Rejected", "Cancelled"];
+
+<div>
+  <label className={label}>Payment Status</label>
+
+  <div className="flex gap-3 mt-3 flex-wrap">
+    {STATUS.map((s) => {
+      const isActive = form.payment_status === s;
+
+      return (
+        <button
+          key={s}
+          type="button"
+          onClick={() =>
+            setForm((p) => ({ ...p, payment_status: s }))
+          }
+          className={`inline-flex w-auto items-center justify-center px-5 py-2 rounded-xl text-sm font-semibold border transition
+            ${
+              isActive
+                ? s === "Paid"
+                  ? "bg-green-100 text-green-700 border-green-300"
+                  : s === "Rejected"
+                  ? "bg-red-100 text-red-600 border-red-300"
+                  : s === "Cancelled"
+                  ? "bg-gray-100 text-gray-700 border-gray-300"
+                  : "bg-yellow-100 text-yellow-700 border-yellow-300"
+                : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+            }`}
+        >
+          {s}
+        </button>
+      );
+    })}
+  </div>
+</div>
+
 
           {/* DESCRIPTION */}
           <div>

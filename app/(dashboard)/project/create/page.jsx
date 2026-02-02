@@ -56,7 +56,7 @@ export default function CreateProject() {
       );
 
       alert("✅ Project created successfully");
-      router.push("/projects");
+      
     } catch (err) {
       alert(err.response?.data?.message || "Failed to create project");
     }
