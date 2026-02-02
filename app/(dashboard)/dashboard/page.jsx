@@ -86,14 +86,35 @@ export default function DashboardPage() {
       </div>
 
       {/* PROJECT HEALTH */}
-      <Card title="Project Status">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Stat label="On Time" value={projectHealth.timeline_status.on_time} />
-          <Stat label="Delayed" value={projectHealth.timeline_status.delayed} />
-          <Stat label="Near Completion" value={projectHealth.progress_metrics.near_completion} />
-          <Stat label="Needs Attention" value={projectHealth.progress_metrics.needs_attention} />
-        </div>
-      </Card>
+    <Card title="Project Status">
+  <div className="space-y-4">
+    <ProgressRow
+      label="Completed"
+      value={projectHealth.timeline_status.on_time}
+      total={overview.projects.total}
+      color="bg-emerald-500"
+    />
+    <ProgressRow
+      label="In Progress"
+      value={overview.projects.in_progress}
+      total={overview.projects.total}
+      color="bg-teal-500"
+    />
+    <ProgressRow
+      label="Planning"
+      value={projectHealth.progress_metrics.near_completion}
+      total={overview.projects.total}
+      color="bg-amber-500"
+    />
+    <ProgressRow
+      label="Delayed"
+      value={projectHealth.timeline_status.delayed}
+      total={overview.projects.total}
+      color="bg-red-500"
+    />
+  </div>
+</Card>
+
 
       {/* SALES */}
       <Card title="Sales Performance">
@@ -106,13 +127,38 @@ export default function DashboardPage() {
       </Card>
 
       {/* PAYMENTS */}
-      <Card title="Payment Status" icon={FileText}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Stat label="Pending Invoices" value={`₹${payments.pending_invoices.amount.toLocaleString()}`} />
-          <Stat label="Overdue Invoices" value={`₹${payments.overdue_invoices.amount.toLocaleString()}`} danger />
-          <Stat label="Payment Success Rate" value={`${payments.payment_metrics.payment_success_rate}%`} />
-        </div>
-      </Card>
+   <Card title="Payment Status" icon={FileText}>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <PaymentCard
+      label="Pending Invoices"
+      value={`₹${payments.pending_invoices.amount.toLocaleString()}`}
+      subtitle={`${payments.pending_invoices.count} invoices`}
+      color="bg-amber-100 text-amber-700"
+    />
+
+    <PaymentCard
+      label="Overdue Invoices"
+      value={`₹${payments.overdue_invoices.amount.toLocaleString()}`}
+      subtitle={`${payments.overdue_invoices.count} overdue`}
+      color="bg-red-100 text-red-700"
+    />
+
+    <PaymentCard
+      label="Payment Success"
+      value={`${payments.payment_metrics.payment_success_rate}%`}
+      subtitle="Success rate"
+      color="bg-emerald-100 text-emerald-700"
+    />
+  </div>
+</Card>
+<Card title="Quick Insights">
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <Stat label="Avg ROI" value={`${overview.financial.avg_roi}%`} />
+    <Stat label="Profit Margin" value={`${overview.financial.profit_margin}%`} />
+    <Stat label="Deals Closed" value={sales.metrics.closed_deals} />
+    <Stat label="At Risk Projects" value={projectHealth.at_risk_projects.length} danger />
+  </div>
+</Card>
 
       {/* ALERTS */}
       {projectHealth.at_risk_projects.length > 0 && (
@@ -164,12 +210,42 @@ function Card({ title, children, icon: Icon }) {
 function Stat({ label, value, danger }) {
   return (
     <div
-      className={`p-4 rounded-lg ${
-        danger ? "bg-red-100 text-red-700" : "bg-gray-100"
+      className={`p-4 rounded-lg border ${
+        danger
+          ? "bg-red-50 border-red-200 text-red-700"
+          : "bg-white border-gray-200"
       }`}
     >
       <p className="text-sm text-gray-500">{label}</p>
       <p className="text-xl font-semibold mt-1">{value}</p>
+    </div>
+  );
+}
+
+function ProgressRow({ label, value, total, color }) {
+  const percent = Math.round((value / total) * 100);
+
+  return (
+    <div>
+      <div className="flex justify-between text-sm mb-1">
+        <span className="text-gray-600">{label}</span>
+        <span className="font-medium">{value}</span>
+      </div>
+      <div className="w-full h-2 bg-gray-200 rounded-full">
+        <div
+          className={`h-2 rounded-full ${color}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+function PaymentCard({ label, value, subtitle, color }) {
+  return (
+    <div className={`rounded-xl p-5 ${color}`}>
+      <p className="text-sm opacity-80">{label}</p>
+      <p className="text-2xl font-bold mt-1">{value}</p>
+      <p className="text-xs mt-1 opacity-70">{subtitle}</p>
     </div>
   );
 }
