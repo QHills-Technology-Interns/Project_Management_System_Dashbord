@@ -192,7 +192,7 @@ export default function CreateExpense() {
           </div>
 
           {/* PAYMENT STATUS */}
-        const STATUS = ["Paid", "Pending", "Rejected", "Cancelled"];
+      
 
 <div>
   <label className={label}>Payment Status</label>
