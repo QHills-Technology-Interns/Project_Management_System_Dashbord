@@ -3,7 +3,37 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const STATUS = ["Pending", "Paid", "Cancelled", "Rejected"];
+const PAYMENT_STATUS = [
+  {
+    key: "Pending",
+    label: "Pending",
+    color: "yellow",
+    desc: "Waiting for payment approval",
+    progress: 30,
+  },
+  {
+    key: "Paid",
+    label: "Paid",
+    color: "green",
+    desc: "Payment completed successfully",
+    progress: 100,
+  },
+  {
+    key: "Cancelled",
+    label: "Cancelled",
+    color: "gray",
+    desc: "Expense was cancelled",
+    progress: 0,
+  },
+  {
+    key: "Rejected",
+    label: "Rejected",
+    color: "red",
+    desc: "Payment request rejected",
+    progress: 0,
+  },
+];
+
 
 export default function CreateExpense() {
   const router = useRouter();
@@ -194,40 +224,106 @@ export default function CreateExpense() {
           </div>
 
           {/* PAYMENT STATUS */}
-          <div>
-            <label className={label}>Payment Status</label>
+        {/* PAYMENT STATUS */}
+<div>
+  <label className="block mb-2 text-sm font-semibold text-gray-700">
+    Payment Status
+  </label>
 
-            <div className="flex gap-3 mt-3 flex-wrap">
-              {STATUS.map((s) => {
-                const isActive = form.payment_status === s;
+  {/* STATUS CARDS */}
+  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {PAYMENT_STATUS.map((s) => {
+      const active = form.payment_status === s.key;
 
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    aria-pressed={isActive}
-                    onClick={() =>
-                      setForm((p) => ({ ...p, payment_status: s }))
-                    }
-                    className={`inline-flex items-center justify-center px-5 py-2 rounded-xl text-sm font-semibold border transition
-                      ${
-                        isActive
-                          ? s === "Paid"
-                            ? "bg-green-100 text-green-700 border-green-300"
-                            : s === "Rejected"
-                            ? "bg-red-100 text-red-600 border-red-300"
-                            : s === "Cancelled"
-                            ? "bg-gray-100 text-gray-700 border-gray-300"
-                            : "bg-yellow-100 text-yellow-700 border-yellow-300"
-                          : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-                      }`}
-                  >
-                    {s}
-                  </button>
-                );
-              })}
-            </div>
+      return (
+        <button
+          key={s.key}
+          type="button"
+          onClick={() =>
+            setForm((p) => ({
+              ...p,
+              payment_status: s.key,
+              notes:
+                s.key === "Rejected"
+                  ? "Reason for rejection..."
+                  : s.key === "Cancelled"
+                  ? "Cancellation reason..."
+                  : p.notes,
+            }))
+          }
+          className={`rounded-2xl border p-4 text-left transition-all duration-200
+            ${
+              active
+                ? `border-${s.color}-400 bg-${s.color}-50 scale-[1.02]`
+                : "border-gray-200 bg-white hover:bg-gray-50"
+            }
+          `}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span
+              className={`text-sm font-bold ${
+                active ? `text-${s.color}-700` : "text-gray-700"
+              }`}
+            >
+              {s.label}
+            </span>
+
+            {active && (
+              <span
+                className={`text-xs px-2 py-1 rounded-full bg-${s.color}-100 text-${s.color}-700`}
+              >
+                Selected
+              </span>
+            )}
           </div>
+
+          <p className="text-xs text-gray-500">{s.desc}</p>
+        </button>
+      );
+    })}
+  </div>
+
+  {/* PROGRESS BAR */}
+  <div className="mt-5">
+    <div className="flex justify-between text-xs text-gray-500 mb-1">
+      <span>Payment Progress</span>
+      <span>
+        {
+          PAYMENT_STATUS.find(
+            (s) => s.key === form.payment_status
+          )?.progress
+        }
+        %
+      </span>
+    </div>
+
+    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        className="h-full bg-green-500 transition-all duration-500"
+        style={{
+          width: `${
+            PAYMENT_STATUS.find(
+              (s) => s.key === form.payment_status
+            )?.progress
+          }%`,
+        }}
+      />
+    </div>
+  </div>
+
+  {/* HELPER TEXT */}
+  <p className="mt-2 text-xs text-gray-500 italic">
+    {form.payment_status === "Pending" &&
+      "💡 Expense will remain open until marked as paid"}
+    {form.payment_status === "Paid" &&
+      "✅ This expense will be locked for editing"}
+    {form.payment_status === "Rejected" &&
+      "❌ Please mention a rejection reason in notes"}
+    {form.payment_status === "Cancelled" &&
+      "⚠️ Cancelled expenses are excluded from reports"}
+  </p>
+</div>
+
 
           {/* DESCRIPTION */}
           <div>
