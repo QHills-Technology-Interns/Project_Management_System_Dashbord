@@ -87,7 +87,7 @@ export default function DashboardPage() {
 
       {/* PROJECT HEALTH */}
       <Card title="Project Status">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Stat label="On Time" value={projectHealth.timeline_status.on_time} />
           <Stat label="Delayed" value={projectHealth.timeline_status.delayed} />
           <Stat label="Near Completion" value={projectHealth.progress_metrics.near_completion} />
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
       {/* SALES */}
       <Card title="Sales Performance">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Stat label="Total Deal Value" value={`₹${sales.metrics.total_deals_value.toLocaleString()}`} />
           <Stat label="Win Rate" value={`${sales.metrics.win_rate}%`} />
           <Stat label="Avg Deal Size" value={`₹${sales.metrics.average_deal_size}`} />
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
       {/* PAYMENTS */}
       <Card title="Payment Status" icon={FileText}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Stat label="Pending Invoices" value={`₹${payments.pending_invoices.amount.toLocaleString()}`} />
           <Stat label="Overdue Invoices" value={`₹${payments.overdue_invoices.amount.toLocaleString()}`} danger />
           <Stat label="Payment Success Rate" value={`${payments.payment_metrics.payment_success_rate}%`} />
@@ -116,7 +116,7 @@ export default function DashboardPage() {
 
       {/* ALERTS */}
       {projectHealth.at_risk_projects.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <h2 className="text-lg font-semibold flex items-center gap-2 text-red-700">
             <AlertTriangle size={18} /> At-Risk Projects
           </h2>
