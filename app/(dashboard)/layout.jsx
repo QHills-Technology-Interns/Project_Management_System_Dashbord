@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   FolderKanban,
   Receipt,
@@ -14,7 +14,8 @@ import {
   DollarSign,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
+  LogOut
 } from "lucide-react";
 
 const navItems = [
@@ -47,8 +48,11 @@ const navItems = [
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -74,8 +78,8 @@ export default function DashboardLayout({ children }) {
       >
         {/* Logo */}
         <div className="flex items-center justify-between px-5 py-4 border-b">
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-9 h-9 bg-emerald-600 text-white rounded-full flex items-center justify-center">
+          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
+            <div className="w-11 h-11 bg-emerald-600 text-white rounded-full flex items-center justify-center">
               BM
             </div>
             BusinessManager
@@ -134,6 +138,18 @@ export default function DashboardLayout({ children }) {
             );
           })}
         </nav>
+
+        {/* Logout Button */}
+        <div className="absolute bottom-4 w-full px-3">
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className="flex w-full items-center gap-3 px-3 py-2 rounded-lg
+            text-red-600 hover:bg-red-50 font-medium"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Main Area */}
@@ -149,9 +165,7 @@ export default function DashboardLayout({ children }) {
               >
                 <Menu size={20} />
               </button>
-              <h1 className="text-lg font-semibold text-gray-800">
-                Dashboard
-              </h1>
+              <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
             </div>
 
             <div className="flex items-center gap-4">
@@ -160,7 +174,7 @@ export default function DashboardLayout({ children }) {
               </button>
 
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">
+                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
                   JD
                 </div>
                 <div className="hidden sm:block">
@@ -173,10 +187,39 @@ export default function DashboardLayout({ children }) {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl w-[320px] p-6 shadow-xl">
+            <h2 className="text-lg font-semibold">Confirm Logout</h2>
+            <p className="text-sm text-gray-600 mt-2">
+              Are you sure you want to logout?
+            </p>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 border rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  router.push("/");
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

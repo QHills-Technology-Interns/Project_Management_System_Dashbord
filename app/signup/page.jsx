@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Eye } from "lucide-react";
+
+import Image from "next/image";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [responseData, setResponseData] = useState(null); 
   const [error, setError] = useState(null);
 const handleSubmit = async (e) => {
@@ -45,34 +49,37 @@ const res = await fetch(
   return (
     <div className="signup-container">
       <div className="signup-card">
-        <div className="logo">⚡</div>Acme
+        
+          <div className="logo-wrapper">
+  <img src="/logo1-dashbord.png" alt="CEO Dashboard Logo" />
+</div>
         <h2>Create your account</h2>
         <p className="subtitle">Get started with your free account today</p>
 
         <form onSubmit={handleSubmit} className="signup-form">
-          <div className="name-fields">
-            <div className="field">
-              <label>First name</label>
-              <input
-                type="text"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
+    <div className="name-fields">
+  <div className="field">
+    <label>First name</label>
+    <input
+      type="text"
+      placeholder="John"
+      value={firstName}
+      onChange={(e) => setFirstName(e.target.value)}
+      required
+    />
+  </div>
 
-            <div className="field">
-              <label>Last name</label>
-              <input
-                type="text"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+  <div className="field">
+    <label>Last name</label>
+    <input
+      type="text"
+      placeholder="Doe"
+      value={lastName}
+      onChange={(e) => setLastName(e.target.value)}
+      required
+    />
+  </div>
+</div>
 
           <label>Email</label>
           <input
@@ -84,13 +91,22 @@ const res = await fetch(
           />
 
           <label>Password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <span
+  className="toggle-password"
+  onClick={() => setShowPassword(!showPassword)}
+>
+  <Eye size={18} color="#000" />
+</span>
+
+          </div>
 
           <button type="submit">Create account</button>
         </form>

@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
+import "./login.css";
 
-
-import './login.css'
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -20,13 +24,11 @@ export default function LoginPage() {
         "https://ceo-dashboard-z65r.onrender.com/api/auth/login",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         }
       );
-      
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -35,28 +37,24 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
-      alert("Login successful!");
-       
-
-      // ✅ REDIRECT TO DASHBOARD
       router.push("/dashboard");
-      console.log("User:", data.user);
-
     } catch (err) {
       console.error(err);
       setError("Server not reachable");
     }
   };
-  
-  const router = useRouter(); // ✅ DEFINE ROUTER
 
-  const handleClick = () => {
-    router.push("/dashboard");
-  };
   return (
     <div className="login-wrapper">
       <div className="login-card">
-        <div className="logo">⚡ Acme</div>
+
+        {/* ✅ LOGO */}
+        
+        <div className="logo-wrapper">
+  <img src="/logo1-dashbord.png" alt="CEO Dashboard Logo" />
+</div>
+
+        
 
         <h1>Welcome back</h1>
         <p className="subtitle">Sign in to your account to continue</p>
@@ -71,17 +69,28 @@ export default function LoginPage() {
           />
 
           <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <button type="submit" onClick={handleClick}>Sign in</button>
+            <span
+  className="toggle-password"
+  onClick={() => setShowPassword(!showPassword)}
+>
+  <Eye size={18} color="#000" />
+</span>
+
+          </div>
+
+
+          <button type="submit">Sign in</button>
         </form>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error">{error}</p>}
 
         <p className="footer">
           Don&apos;t have an account? <Link href="/signup">Create one</Link>
@@ -89,4 +98,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-  }
+}
