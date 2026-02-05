@@ -27,6 +27,7 @@ const res = await fetch(
     firstName,
     lastName,
     email,
+    role,
     password,
   }),
 });
