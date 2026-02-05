@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import "./login.css";
@@ -12,6 +11,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("employee"); // ✅ NEW
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,7 +25,11 @@ export default function LoginPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            email,
+            password,
+            role, // ✅ SEND ROLE TO BACKEND
+          }),
         }
       );
 
@@ -37,6 +41,7 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", role); // optional
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
@@ -48,13 +53,10 @@ export default function LoginPage() {
     <div className="login-wrapper">
       <div className="login-card">
 
-        {/* ✅ LOGO */}
-        
+        {/* LOGO */}
         <div className="logo-wrapper">
-  <img src="/logo1-dashbord.png" alt="CEO Dashboard Logo" />
-</div>
-
-        
+          <img src="/logo1-dashbord.png" alt="CEO Dashboard Logo" />
+        </div>
 
         <h1>Welcome back</h1>
         <p className="subtitle">Sign in to your account to continue</p>
@@ -68,6 +70,18 @@ export default function LoginPage() {
             required
           />
 
+          {/* ✅ ROLE SELECT */}
+          <label>Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="employee">Employee</option>
+            <option value="manager">Manager</option>
+            <option value="ceo">CEO</option>
+          </select>
+
           <label>Password</label>
           <div className="password-wrapper">
             <input
@@ -78,14 +92,12 @@ export default function LoginPage() {
             />
 
             <span
-  className="toggle-password"
-  onClick={() => setShowPassword(!showPassword)}
->
-  <Eye size={18} color="#000" />
-</span>
-
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <Eye size={18} color="#000" />
+            </span>
           </div>
-
 
           <button type="submit">Sign in</button>
         </form>

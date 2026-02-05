@@ -59,141 +59,187 @@ export default function DashboardLayout({ children }) {
   }, [pathname]);
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
 
-      {/* Mobile Overlay */}
+      {/* Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-20 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`fixed z-30 inset-y-0 left-0 w-64 bg-white border-r transform transition-transform
-        lg:relative lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Logo */}
-        <div className="flex items-center justify-between px-5 py-4 border-b">
-          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-11 h-11 bg-emerald-600 text-white rounded-full flex items-center justify-center">
-              BM
-            </div>
-            BusinessManager
-          </Link>
+      {/* Sidebar */}
+{/* Sidebar */}
+<aside
+  
+  className={`fixed z-30 inset-y-0 left-0 w-64
+  bg-gray-100 text-gray-800
+  transition-transform duration-300
+  lg:relative lg:translate-x-0 ${
+    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+  }`}
+>
 
-          <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
-            <X size={20} />
-          </button>
-        </div>
+  {/* Logo */}
+  <div className="flex items-center justify-between px-6 py-5 border-b">
+    <Link href="/dashboard" className="flex items-center gap-3 font-bold text-lg">
+      <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center">
+        BM
+      </div>
+      BusinessManager
+    </Link>
 
-        {/* Navigation */}
-        <nav className="p-3 space-y-2">
-          {navItems.map((menu, index) => {
-            const isOpen = openMenu === index;
+    <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+      <X size={20} />
+    </button>
+  </div>
 
-            return (
-              <div key={index}>
-                <button
-                  onClick={() => setOpenMenu(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between px-3 py-2 rounded-lg
-                  text-gray-700 hover:bg-gray-100"
-                >
-                  <div className="flex items-center gap-3">
-                    <menu.icon size={18} />
-                    <span className="font-medium">{menu.label}</span>
-                  </div>
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
+  {/* Navigation */}
+  <nav className="px-3 py-4 space-y-2">
+    {navItems.map((menu, index) => {
+      const isOpen = openMenu === index;
 
-                {isOpen && (
-                  <div className="ml-8 mt-1 space-y-1">
-                    {menu.children.map((item, i) => {
-                      const isActive = pathname.startsWith(item.href);
-                      return (
-                        <Link
-                          key={i}
-                          href={item.href}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm
-                          ${
-                            isActive
-                              ? "bg-emerald-100 text-emerald-700 font-medium"
-                              : "text-gray-600 hover:bg-gray-100"
-                          }`}
-                        >
-                          <item.icon size={14} />
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-
-        {/* Logout Button */}
-        <div className="absolute bottom-4 w-full px-3">
+      return (
+        <div key={index}>
+          {/* Parent Menu */}
           <button
-            onClick={() => setShowLogoutModal(true)}
-            className="flex w-full items-center gap-3 px-3 py-2 rounded-lg
-            text-red-600 hover:bg-red-50 font-medium"
+            onClick={() => setOpenMenu(isOpen ? null : index)}
+            className={`flex w-full items-center justify-between px-4 py-2.5 rounded-lg
+            transition
+            ${
+              isOpen
+                ? "bg-black text-white"
+                : "text-gray-700 hover:bg-gray-200"
+            }`}
           >
-            <LogOut size={18} />
-            Logout
-          </button>
-        </div>
-      </aside>
+            <div className="flex items-center gap-3">
+              <menu.icon
+                size={18}
+                className={isOpen ? "text-white" : "text-gray-600"}
+              />
+              <span className="font-medium">{menu.label}</span>
+            </div>
 
-      {/* Main Area */}
+            <ChevronDown
+              size={16}
+              className={`transition-transform ${
+                isOpen
+                  ? "rotate-180 text-white"
+                  : "text-gray-500"
+              }`}
+            />
+          </button>
+
+          {/* Child Menu */}
+          {isOpen && (
+            <div className="ml-4 mt-1 space-y-1 border-l border-gray-300 pl-4">
+              {menu.children.map((item, i) => {
+                const isActive = pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={i}
+                    href={item.href}
+                    className={`relative flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                    ${
+                      isActive
+                        ? "bg-emerald-600 text-white font-medium"
+                        : "text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {isActive && (
+                      <span className="absolute left-0 top-0 h-full w-1 bg-emerald-700 rounded-r" />
+                    )}
+                    <item.icon size={14} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </nav>
+
+  {/* Logout */}
+  <div className="absolute bottom-4 w-full px-3">
+    <button
+      onClick={() => setShowLogoutModal(true)}
+      className="flex w-full items-center gap-3 px-4 py-2 rounded-lg
+      text-red-600 hover:bg-red-100 font-medium"
+    >
+      <LogOut size={18} />
+      Logout
+    </button>
+  </div>
+</aside>
+
+      {/* Main */}
       <div className="flex-1 flex flex-col">
 
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-white border-b">
-          <div className="flex items-center justify-between px-6 py-3">
-            <div className="flex items-center gap-4">
-              <button
-                className="lg:hidden p-2 rounded-md bg-gray-100"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu size={20} />
-              </button>
-              <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
-            </div>
+      {/* Header */}
+<header className="sticky top-0 z-20 bg-white/90 backdrop-blur">
+  <div className="flex items-center justify-between px-6 py-4">
 
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium">
-                + New Project
-              </button>
+    {/* Left */}
+    <div className="flex items-center gap-4">
+      <button
+        className="lg:hidden p-2 rounded-lg bg-slate-100 hover:bg-slate-200"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <Menu size={20} />
+      </button>
 
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
-                  JD
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-sm font-medium">John Doe</p>
-                  <p className="text-xs text-gray-500">CEO</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+      <div>
+        <h1 className="text-lg font-semibold text-slate-900">
+          Dashboard
+        </h1>
+        <p className="text-xs text-slate-500">
+          Overview & insights
+        </p>
+      </div>
+    </div>
 
-        {/* Content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+    {/* Right */}
+    <div className="flex items-center gap-4">
+
+      <button className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-700 transition">
+        + New Project
+      </button>
+
+      <div className="flex items-center gap-3 pl-4 border-l">
+        <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">
+          JD
+        </div>
+        <div className="hidden sm:block leading-tight">
+          <p className="text-sm font-medium text-slate-900">
+            John Doe
+          </p>
+          <p className="text-xs text-slate-500">
+            CEO
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+
+        {/* Page Content */}
+        <main className="flex-1 p-6 overflow-y-auto bg-gray-50">
+          {children}
+        </main>
       </div>
 
       {/* Logout Modal */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl w-[320px] p-6 shadow-xl">
+          <div className="bg-white rounded-xl w-[320px] p-6 shadow-2xl">
             <h2 className="text-lg font-semibold">Confirm Logout</h2>
             <p className="text-sm text-gray-600 mt-2">
               Are you sure you want to logout?

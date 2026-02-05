@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("employee"); 
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [responseData, setResponseData] = useState(null); 
@@ -89,6 +90,16 @@ const res = await fetch(
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+               <label>Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="employee">Employee</option>
+            <option value="manager">Manager</option>
+            <option value="admin">CEO</option>
+          </select>
 
           <label>Password</label>
           <div className="password-wrapper">

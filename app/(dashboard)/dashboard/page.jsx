@@ -2,259 +2,169 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  FolderKanban,
-  IndianRupee,
-  Users,
-  AlertTriangle,
-  FileText,
-  Handshake
-} from "lucide-react";
 
-const API = "https://ceo-dashboard-z65r.onrender.com/api/dashboard";
+const API_BASE = "https://ceo-dashboard-z65r.onrender.com/api";
 
 export default function DashboardPage() {
   const [overview, setOverview] = useState(null);
-  const [projectHealth, setProjectHealth] = useState(null);
-  const [sales, setSales] = useState(null);
-  const [payments, setPayments] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      axios.get(`${API}/overview`),
-      axios.get(`${API}/project-health`),
-      axios.get(`${API}/sales-funnel`),
-      axios.get(`${API}/payment-status`)
-    ])
-      .then(([o, p, s, pay]) => {
-        setOverview(o.data.data);
-        setProjectHealth(p.data.data);
-        setSales(s.data.data);
-        setPayments(pay.data.data);
-      })
-      .catch(console.error);
+    fetchDashboard();
   }, []);
 
-  if (!overview) {
-    return <div className="p-6 text-gray-500">Loading dashboard...</div>;
+  const fetchDashboard = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/dashboard/overview`);
+      const data = res.data.data;
+
+      setOverview(data);
+      setProjects(data.projects_list || []); // if you expose project list
+    } catch (err) {
+      console.error("Dashboard API error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading dashboard...</p>;
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen space-y-8">
+    <div className="space-y-8">
 
       {/* HEADER */}
-      <div>
-        <h1 className="text-2xl font-bold">Dashboard Overview</h1>
-        <p className="text-gray-500">
-          Welcome back! Here's what's happening with your business.
-        </p>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <input
+          className="border px-3 py-2 rounded-lg text-sm"
+          placeholder="Search projects..."
+        />
       </div>
 
-      {/* KPI CARDS */}
+      {/* TOP CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KpiCard
+        <StatCard
           title="Total Projects"
           value={overview.projects.total}
-          subtitle={`${overview.projects.in_progress} in progress`}
-          icon={FolderKanban}
-          color="bg-teal-100 text-teal-600"
+          subtitle="+ this month"
         />
 
-        <KpiCard
+        <StatCard
+          title="Active Projects"
+          value={overview.projects.in_progress}
+          subtitle="Currently in progress"
+        />
+
+        <StatCard
+          title="Projects at Risk"
+          value={overview.projects.total - overview.projects.completed}
+          subtitle="Need attention"
+        />
+
+        <StatCard
           title="Total Revenue"
-          value={`₹${overview.financial.total_revenue.toLocaleString()}`}
-          subtitle="This fiscal year"
-          icon={IndianRupee}
-          color="bg-green-100 text-green-600"
-        />
-
-        <KpiCard
-          title="Active Deals"
-          value={overview.sales.active_pipeline}
-          subtitle="In pipeline"
-          icon={Handshake}
-          color="bg-yellow-100 text-yellow-600"
-        />
-
-        <KpiCard
-          title="Active Sales Reps"
-          value={overview.team.active_sales_reps}
-          subtitle="Sales team"
-          icon={Users}
-          color="bg-blue-100 text-blue-600"
+          value={`₹${overview.financial.total_revenue}`}
+          subtitle="From paid milestones"
         />
       </div>
 
-      {/* PROJECT HEALTH */}
-  
- <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* MAIN CONTENT */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-  {/* PROJECT STATUS */}
-  <Card title="Project Status">
-    <div className="space-y-4">
-      <ProgressRow
-        label="Completed"
-        value={projectHealth.timeline_status.on_time}
-        total={overview.projects.total}
-        color="bg-emerald-500"
-      />
-      <ProgressRow
-        label="In Progress"
-        value={overview.projects.in_progress}
-        total={overview.projects.total}
-        color="bg-teal-500"
-      />
-      <ProgressRow
-        label="Planning"
-        value={projectHealth.progress_metrics.near_completion}
-        total={overview.projects.total}
-        color="bg-amber-500"
-      />
-      <ProgressRow
-        label="Delayed"
-        value={projectHealth.timeline_status.delayed}
-        total={overview.projects.total}
-        color="bg-red-500"
-      />
-    </div>
-  </Card>
+        {/* ALL PROJECTS */}
+        <div className="lg:col-span-2 bg-white rounded-xl p-6">
+          <h2 className="font-semibold mb-4">All Projects</h2>
 
-  {/* SALES PERFORMANCE */}
-  <Card title="Sales Performance">
-    <div className="grid grid-cols-2 gap-4">
-      <Stat
-        label="Total Deal Value"
-        value={`₹${sales.metrics.total_deals_value.toLocaleString()}`}
-      />
-      <Stat
-        label="Win Rate"
-        value={`${sales.metrics.win_rate}%`}
-      />
-      <Stat
-        label="Avg Deal Size"
-        value={`₹${sales.metrics.average_deal_size}`}
-      />
-      <Stat
-        label="Expected Revenue"
-        value={`₹${sales.metrics.expected_revenue.toLocaleString()}`}
-      />
-    </div>
-  </Card>
+          <table className="w-full text-sm">
+            <thead className="text-gray-500 border-b">
+              <tr>
+                <th className="text-left py-2">Project</th>
+                <th>Client</th>
+                <th>Status</th>
+                <th>Budget</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
 
-</div>
-      {/* PAYMENTS */}
-   <Card title="Payment Status" icon={FileText}>
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <PaymentCard
-      label="Pending Invoices"
-      value={`₹${payments.pending_invoices.amount.toLocaleString()}`}
-      subtitle={`${payments.pending_invoices.count} invoices`}
-      color="bg-amber-100 text-amber-700"
-    />
+            <tbody>
+              {projects.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="py-6 text-center text-gray-400">
+                    No projects found
+                  </td>
+                </tr>
+              )}
 
-    <PaymentCard
-      label="Overdue Invoices"
-      value={`₹${payments.overdue_invoices.amount.toLocaleString()}`}
-      subtitle={`${payments.overdue_invoices.count} overdue`}
-      color="bg-red-100 text-red-700"
-    />
-
-    <PaymentCard
-      label="Payment Success"
-      value={`${payments.payment_metrics.payment_success_rate}%`}
-      subtitle="Success rate"
-      color="bg-emerald-100 text-emerald-700"
-    />
-  </div>
-</Card>
-
-
-      {/* ALERTS */}
-      {projectHealth.at_risk_projects.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <h2 className="text-lg font-semibold flex items-center gap-2 text-red-700">
-            <AlertTriangle size={18} /> At-Risk Projects
-          </h2>
-          <ul className="mt-3 list-disc list-inside text-sm text-red-600">
-            {projectHealth.at_risk_projects.slice(0, 5).map(p => (
-              <li key={p.project_id}>
-                {p.project_name} — {p.progress_percentage}% complete
-              </li>
-            ))}
-          </ul>
+              {projects.map((p) => (
+                <tr key={p.project_id} className="border-b last:border-none">
+                  <td className="py-3">{p.project_name}</td>
+                  <td>{p.client_name || "-"}</td>
+                  <td>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium
+                      ${
+                        p.project_status === "In Progress"
+                          ? "bg-green-100 text-green-700"
+                          : p.project_status === "Completed"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {p.project_status}
+                    </span>
+                  </td>
+                  <td>₹{p.total_budget}</td>
+                  <td>
+                    <div className="h-2 bg-gray-200 rounded">
+                      <div
+                        className="h-2 bg-blue-600 rounded"
+                        style={{
+                          width: `${p.progress_percentage || 0}%`
+                        }}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
-    </div>
-  );
-}
 
-/* ================= COMPONENTS ================= */
+        {/* UPCOMING MILESTONES (FROM OVERVIEW / FUTURE API) */}
+        <div className="bg-white rounded-xl p-6">
+          <h2 className="font-semibold mb-4">Upcoming Milestones</h2>
 
-function KpiCard({ title, value, subtitle, icon: Icon, color }) {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-5 flex justify-between items-center hover:shadow-md transition">
-      <div>
-        <p className="text-gray-500 text-sm">{title}</p>
-        <p className="text-2xl font-bold mt-1">{value}</p>
-        <p className="text-xs text-gray-400 mt-1">{subtitle}</p>
-      </div>
-      <div className={`p-3 rounded-full ${color}`}>
-        <Icon size={26} />
-      </div>
-    </div>
-  );
-}
+          {overview.invoices.pending === 0 ? (
+            <p className="text-sm text-gray-400">No upcoming milestones</p>
+          ) : (
+            <div className="border rounded-lg p-4">
+              <p className="font-medium">Pending Invoices</p>
+              <p className="text-sm text-gray-500">
+                Count: {overview.invoices.pending}
+              </p>
+              <span className="inline-block mt-2 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">
+                Pending
+              </span>
+            </div>
+          )}
+        </div>
 
-function Card({ title, children, icon: Icon }) {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-5">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        {Icon && <Icon size={18} />} {title}
-      </h2>
-      {children}
-    </div>
-  );
-}
-
-function Stat({ label, value, danger }) {
-  return (
-    <div
-      className={`p-4 rounded-lg border ${
-        danger
-          ? "bg-red-50 border-red-200 text-red-700"
-          : "bg-white border-gray-200"
-      }`}
-    >
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-xl font-semibold mt-1">{value}</p>
-    </div>
-  );
-}
-
-function ProgressRow({ label, value, total, color }) {
-  const percent = Math.round((value / total) * 100);
-
-  return (
-    <div>
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-600">{label}</span>
-        <span className="font-medium">{value}</span>
-      </div>
-      <div className="w-full h-2 bg-gray-200 rounded-full">
-        <div
-          className={`h-2 rounded-full ${color}`}
-          style={{ width: `${percent}%` }}
-        />
       </div>
     </div>
   );
 }
-function PaymentCard({ label, value, subtitle, color }) {
+
+/* ---------- COMPONENT ---------- */
+
+function StatCard({ title, value, subtitle }) {
   return (
-    <div className={`rounded-xl p-5 ${color}`}>
-      <p className="text-sm opacity-80">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
-      <p className="text-xs mt-1 opacity-70">{subtitle}</p>
+    <div className="bg-white rounded-xl p-5 shadow-sm">
+      <p className="text-sm text-gray-500">{title}</p>
+      <h2 className="text-2xl font-bold mt-1">{value}</h2>
+      <p className="text-xs text-gray-400 mt-1">{subtitle}</p>
     </div>
   );
 }
