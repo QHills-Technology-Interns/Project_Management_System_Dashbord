@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye } from "lucide-react";
-
+import "./signup.css";
 import Image from "next/image";
 
 export default function SignupPage() {
@@ -99,7 +99,7 @@ const res = await fetch(
           >
             <option value="employee">Employee</option>
             <option value="manager">Manager</option>
-            <option value="admin">CEO</option>
+            <option value="admin">Admin</option>
           </select>
 
           <label>Password</label>
