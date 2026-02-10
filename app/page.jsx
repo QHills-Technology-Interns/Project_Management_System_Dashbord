@@ -19,7 +19,7 @@ export default function LoginPage() {
 
     try {
       const res = await fetch(
-        "https://ceo-dashboard-z65r.onrender.com/api/auth/login",
+        "https://ceo-dashboard-8052.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

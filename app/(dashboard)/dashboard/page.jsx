@@ -9,7 +9,7 @@ import {
   DollarSign,
 } from "lucide-react";
 
-const API_BASE = "https://ceo-dashboard-z65r.onrender.com/api";
+const API_BASE = "https://ceo-dashboard-8052.onrender.com/api";
 
 export default function DashboardPage() {
   const [overview, setOverview] = useState(null);

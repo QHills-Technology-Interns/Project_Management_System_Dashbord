@@ -20,7 +20,7 @@ const handleSubmit = async (e) => {
 
   try {
 const res = await fetch(
-        "https://ceo-dashboard-z65r.onrender.com/api/auth/signup", {
+        "https://ceo-dashboard-8052.onrender.com/api/auth/signup", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({

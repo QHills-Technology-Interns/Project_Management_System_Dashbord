@@ -99,7 +99,7 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    await axios.post("https://ceo-dashboard-z65r.onrender.com/api/milestones", payload, {
+    await axios.post("https://ceo-dashboard-8052.onrender.com/api/milestones", payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

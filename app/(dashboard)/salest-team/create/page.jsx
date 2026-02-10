@@ -50,7 +50,7 @@ export default function CreateSalesTeam() {
 
     try {
       const res = await axios.post(
-        "https://ceo-dashboard-z65r.onrender.com/api/sales-team",
+        "https://ceo-dashboard-8052.onrender.com/api/sales-team",
         form,
         { headers: { 
            Authorization: `Bearer ${token}`,
@@ -147,7 +147,7 @@ export default function CreateSalesTeam() {
           </div>
 
           {/* Team Lead ID */}
-          <div>
+          {/* <div>
             <label className={labelStyle}>Team Lead ID</label>
             <input
               name="team_lead_id"
@@ -155,7 +155,7 @@ export default function CreateSalesTeam() {
               onChange={handleChange}
               className={inputStyle}
             />
-          </div>
+          </div> */}
 
           {/* Region */}
           <div>

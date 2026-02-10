@@ -2,52 +2,66 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useProject } from "../../../../context/ProjectContext";
+
 
 export default function ProjectListPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const router = useRouter();
+  const { setProjectId } = useProject(); // ✅ IMPORTANT
+ 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  const fetchProjects = async () => {
-    try {
-      const token = localStorage.getItem("token");
+const fetchProjects = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "https://ceo-dashboard-z65r.onrender.com/api/projects",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setProjects(res.data.data);
-    } catch (err) {
-      setError("Failed to fetch projects");
-    } finally {
-      setLoading(false);
+    if (!token) {
+      setError("Session expired. Please login again.");
+      return;
     }
+
+    const res = await axios.get(
+      "https://ceo-dashboard-8052.onrender.com/api/projects",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setProjects(res.data.data);
+  } catch (err) {
+    if (err.response?.status === 401) {
+      setError("Unauthorized. Please login again.");
+      localStorage.clear();
+    } else {
+      setError("Failed to fetch projects");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+  /* 🔥 PROJECT SELECT HANDLER */
+  const selectProject = (project) => {
+    setProjectId(id);            // ✅ STORE PROJECT ID
+    router.push("/expensses/create");    // ✅ GO TO CREATE EXPENSE
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">All Projects</h1>
 
-      {/* Loading */}
-      {loading && (
-        <p className="text-sm text-gray-500">Loading projects...</p>
-      )}
+      {loading && <p className="text-sm text-gray-500">Loading projects...</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
 
-      {/* Error */}
-      {error && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
-
-      {/* Project Table */}
       {!loading && !error && (
         <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
@@ -73,6 +87,7 @@ export default function ProjectListPage() {
                 projects.map((project) => (
                   <tr
                     key={project.id}
+                    onClick={() => selectProject(project)} // ✅ CLICK
                     className="border-b hover:bg-gray-50 cursor-pointer"
                   >
                     <td className="px-4 py-3 font-medium">

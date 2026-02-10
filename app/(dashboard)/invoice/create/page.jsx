@@ -30,7 +30,7 @@ const handleSubmit = async (e) => {
   const token = localStorage.getItem("token");
 
   try {
-    const res = await fetch("https://ceo-dashboard-z65r.onrender.com/api/invoices", {
+    const res = await fetch("https://ceo-dashboard-8052.onrender.com/api/invoices", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
