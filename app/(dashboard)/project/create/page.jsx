@@ -256,7 +256,7 @@ console.log("project_id:", project_id);
           </div>
 
           {/* ================= TEAM MEMBERS ================= */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+         <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="flex justify-between mb-6">
               <h2 className="text-lg font-semibold">
                 Team Members
@@ -278,38 +278,41 @@ console.log("project_id:", project_id);
                   className="bg-gray-50 rounded-xl px-5 py-4"
                 >
                   <div className="flex items-end gap-5 flex-nowrap">
-
-                    {/* USER SELECT */}
                     <div className="flex flex-col w-48">
                       <label className="text-xs text-gray-600 mb-1">
                         Member
                       </label>
-            <select
-  className="h-10 rounded-lg border px-3 text-sm"
-  value={member.user_id || ""}
-  onChange={(e) =>
-    handleUserSelect(index, e.target.value)
-  }
->
-  <option value="">Select Member</option>
-
-  {users
-    .filter(
-      (user) =>
-        !selectedUserIds.includes(user.id) ||
-        user.id === member.user_id
-    )
-    .map((user) => (
-      <option key={user.id} value={user.id}>
-        {user.firstName} {user.lastName}
-      </option>
-    ))}
-</select>
-
-
+                      <select
+                        className="h-10 rounded-lg border px-3 text-sm"
+                        value={member.user_id || ""}
+                        onChange={(e) =>
+                          handleUserSelect(
+                            index,
+                            e.target.value
+                          )
+                        }
+                      >
+                        <option value="">Select Member</option>
+                        {users
+                          .filter(
+                            (user) =>
+                              !selectedUserIds.includes(
+                                user.id
+                              ) ||
+                              user.id === member.user_id
+                          )
+                          .map((user) => (
+                            <option
+                              key={user.id}
+                              value={user.id}
+                            >
+                              {user.firstName}{" "}
+                              {user.lastName}
+                            </option>
+                          ))}
+                      </select>
                     </div>
 
-                    {/* ROLE (KEPT) */}
                     <div className="flex flex-col w-40">
                       <label className="text-xs text-gray-600 mb-1">
                         Role
@@ -318,12 +321,15 @@ console.log("project_id:", project_id);
                         className="h-10 rounded-lg border px-3 text-sm"
                         value={member.role}
                         onChange={(e) =>
-                          updateMember(index, "role", e.target.value)
+                          updateMember(
+                            index,
+                            "role",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
 
-                    {/* RATE (KEPT) */}
                     <div className="flex flex-col w-32">
                       <label className="text-xs text-gray-600 mb-1">
                         Rate ($)
@@ -333,12 +339,15 @@ console.log("project_id:", project_id);
                         className="h-10 rounded-lg border px-3 text-sm"
                         value={member.rate}
                         onChange={(e) =>
-                          updateMember(index, "rate", e.target.value)
+                          updateMember(
+                            index,
+                            "rate",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
 
-                    {/* ALLOCATION */}
                     <div className="flex flex-col w-36">
                       <label className="text-xs text-gray-600 mb-1">
                         Allocation %
@@ -357,17 +366,17 @@ console.log("project_id:", project_id);
                       />
                     </div>
 
-                    {/* DELETE */}
                     <div className="flex items-center h-10 mt-5">
                       <button
                         type="button"
-                        onClick={() => removeMember(index)}
+                        onClick={() =>
+                          removeMember(index)
+                        }
                         className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 size={18} />
                       </button>
                     </div>
-
                   </div>
                 </div>
               ))}
