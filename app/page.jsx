@@ -4,6 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Inter } from "next/font/google";
+
+/* ---------------- FONT CONFIG ---------------- */
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,88 +49,124 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f4f7fb] to-[#eef2f7]">
-      <div className="w-[380px] bg-white px-[22px] py-[18px] rounded-[14px] shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
+ return (
+  <div className="min-h-screen flex items-center justify-center
+                  bg-gradient-to-br from-[#f4f7fb] to-[#eef2f7]">
 
-        {/* LOGO */}
-        <div className="flex justify-center mb-7">
-          <img
-            src="/logo1-dashbord.png"
-            alt="CEO Dashboard Logo"
-            className="h-[90px] w-auto"
-          />
-        </div>
+    <div className="w-[380px] bg-white px-6 py-6 rounded-2xl
+                    shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
 
-        <h1 className="text-center text-[22px] font-semibold mb-1">
-          Welcome back
-        </h1>
+      {/* LOGO */}
+      <div className="flex justify-center mb-6">
+        <img
+          src="/logo1-dashbord.png"
+          alt="CEO Dashboard Logo"
+          className="h-18 w-auto"
+        />
+      </div>
 
-        <p className="text-center text-[13px] text-gray-500 mb-6">
-          Sign in to your account to continue
-        </p>
+      <h1 className="text-center text-[22px] font-semibold text-slate-800 mb-1">
+        Welcome back
+      </h1>
 
-        <form onSubmit={handleLogin}>
-          {/* EMAIL */}
-          <label className="block text-[13px] font-medium mb-1">
-            Email
-          </label>
+      <p className="text-center text-[14px] text-gray-500 mb-6">
+        Sign in to your account to continue
+      </p>
+
+      <form onSubmit={handleLogin}>
+
+        {/* EMAIL */}
+        <label className="block text-[13px] font-medium text-slate-700 mb-1">
+          Email
+        </label>
+
+        <div className="flex items-center h-[44px] px-3 mb-4 rounded-xl
+                        bg-gray-50 border border-gray-200
+                        focus-within:border-emerald-500 focus-within:bg-white">
+
+          <span className="text-gray-400 mr-2">
+            {/* mail icon */}
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+              <path d="M4 6h16v12H4z" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.5"/>
+            </svg>
+          </span>
+
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full h-[42px] px-3 mb-[14px] rounded-lg border border-gray-300 bg-gray-50 text-[14px]
-              focus:outline-none focus:border-blue-500 focus:bg-white"
+            placeholder="Enter your email"
+            className="flex-1 bg-transparent text-[14px] outline-none"
           />
+        </div>
 
-          {/* PASSWORD */}
-          <label className="block text-[13px] font-medium mb-1">
+        {/* PASSWORD */}
+        <div className="flex items-center justify-between mb-1">
+          <label className="text-[13px] font-medium text-slate-700">
             Password
           </label>
 
-          <div className="flex items-center h-[42px] px-3 mb-[14px] rounded-lg border border-gray-300 bg-gray-50
-            focus-within:border-blue-500 focus-within:bg-white">
+          {/*<span className="text-[13px] text-emerald-500 cursor-pointer">
+            Forgot password?
+          </span>*/}
+        </div>
 
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="flex-1 h-full bg-transparent text-[14px] outline-none border-none"
-            />
+        <div className="flex items-center h-[44px] px-3 mb-5 rounded-xl
+                        bg-gray-50 border border-gray-200
+                        focus-within:border-emerald-500 focus-within:bg-white">
 
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="w-5 h-5 flex items-center justify-center cursor-pointer text-gray-500"
-            >
-              <Eye size={18} />
-            </span>
-          </div>
+          <span className="text-gray-400 mr-2">
+            {/* lock icon */}
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+              <rect x="4" y="11" width="16" height="9" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M8 11V7a4 4 0 018 0v4" stroke="currentColor" strokeWidth="1.5"/>
+            </svg>
+          </span>
 
-          {/* BUTTON */}
-          <button
-            type="submit"
-            className="w-full mt-4 bg-emerald-500 text-white py-[11px] rounded-lg font-semibold text-[14px]
-              hover:bg-emerald-600 transition"
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="••••••••"
+            className="flex-1 bg-transparent text-[14px] outline-none"
+          />
+
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="cursor-pointer text-gray-400 hover:text-gray-600"
           >
-            Sign in
-          </button>
-        </form>
+            <Eye size={18} />
+          </span>
+        </div>
 
-        {error && (
-          <p className="mt-3 text-sm text-red-600 text-center">
-            {error}
-          </p>
-        )}
+        {/* BUTTON */}
+        <button
+          type="submit"
+          className="w-full py-[12px] rounded-xl text-[15px] font-semibold text-white
+                     bg-emerald-500 hover:bg-emerald-600
+                     shadow-[0_10px_25px_rgba(16,185,129,0.35)]
+                     transition"
+        >
+          Sign in
+        </button>
+      </form>
 
-        <p className="text-center text-[13px] text-gray-500 mt-5">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-emerald-500 font-medium">
-            Create one
-          </Link>
+      {error && (
+        <p className="mt-4 text-sm text-red-600 text-center">
+          {error}
         </p>
-      </div>
+      )}
+
+      <p className="text-center text-[14px] text-gray-500 mt-6">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="text-emerald-500 font-medium">
+          Create one
+        </Link>
+      </p>
     </div>
-  );
+  </div>
+);
 }
