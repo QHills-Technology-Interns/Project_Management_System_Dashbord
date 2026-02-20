@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { Inter } from "next/font/google";
+
+/* ---------------- FONT CONFIG ---------------- */
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export default function CreateMilestonePage() {
   const [open, setOpen] = useState("basic");
@@ -46,100 +53,104 @@ export default function CreateMilestonePage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Prepare payload
-  const payload = {
-    // Basic
-    project_id: form.project_id || null,
-    milestone_name: form.milestone_name || null,
-    milestone_order: form.milestone_order ? Number(form.milestone_order) : null,
-    milestone_description: form.milestone_description || null,
+    const payload = {
+      project_id: form.project_id || null,
+      milestone_name: form.milestone_name || null,
+      milestone_order: form.milestone_order ? Number(form.milestone_order) : null,
+      milestone_description: form.milestone_description || null,
 
-    // Dates
-    planned_date: form.planned_date || null,
-    actual_date: form.actual_date || null,
-    date_variance_days: form.date_variance_days ? Number(form.date_variance_days) : null,
+      planned_date: form.planned_date || null,
+      actual_date: form.actual_date || null,
+      date_variance_days: form.date_variance_days ? Number(form.date_variance_days) : null,
 
-    // Financial
-    base_amount: form.base_amount ? Number(form.base_amount) : null,
-    tax_percentage: form.tax_percentage ? Number(form.tax_percentage) : null,
-    tax_amount: form.tax_amount ? Number(form.tax_amount) : null,
-    total_amount: form.total_amount ? Number(form.total_amount) : null,
-    percentage_of_budget: form.percentage_of_budget ? Number(form.percentage_of_budget) : null,
+      base_amount: form.base_amount ? Number(form.base_amount) : null,
+      tax_percentage: form.tax_percentage ? Number(form.tax_percentage) : null,
+      tax_amount: form.tax_amount ? Number(form.tax_amount) : null,
+      total_amount: form.total_amount ? Number(form.total_amount) : null,
+      percentage_of_budget: form.percentage_of_budget ? Number(form.percentage_of_budget) : null,
 
-    // Payment
-    payment_status: form.payment_status || "Pending",
-    payment_due_date: form.payment_due_date || null,
-    payment_received_date: form.payment_received_date || null,
-    days_overdue: form.days_overdue ? Number(form.days_overdue) : null,
+      payment_status: form.payment_status || "Pending",
+      payment_due_date: form.payment_due_date || null,
+      payment_received_date: form.payment_received_date || null,
+      days_overdue: form.days_overdue ? Number(form.days_overdue) : null,
 
-    // Method
-    payment_method: form.payment_method || null,
-    bank_name: form.bank_name || null,
-    account_last_4: form.account_last_4 || null,
-    transaction_id: form.transaction_id || null,
-    processing_fee: form.processing_fee ? Number(form.processing_fee) : null,
+      payment_method: form.payment_method || null,
+      bank_name: form.bank_name || null,
+      account_last_4: form.account_last_4 || null,
+      transaction_id: form.transaction_id || null,
+      processing_fee: form.processing_fee ? Number(form.processing_fee) : null,
 
-    // Invoice
-    invoice_number: form.invoice_number || null,
-    invoice_date: form.invoice_date || null,
-    invoice_due_date: form.invoice_due_date || null,
-    payment_terms: form.payment_terms || null,
-  };
+      invoice_number: form.invoice_number || null,
+      invoice_date: form.invoice_date || null,
+      invoice_due_date: form.invoice_due_date || null,
+      payment_terms: form.payment_terms || null,
+    };
 
-  console.log("Payload being sent:", payload); // <-- Debug log
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("No authorization token found. Please login again.");
+        return;
+      }
 
-  try {
-    const token = localStorage.getItem("token");
+      await axios.post(
+        "https://ceo-dashboard-8052.onrender.com/api/milestones",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (!token) {
-      alert("No authorization token found. Please login again.");
-      return;
+      alert("Milestone created successfully");
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to create milestone");
     }
-
-    await axios.post("https://ceo-dashboard-8052.onrender.com/api/milestones", payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    alert("Milestone created successfully");
-  } catch (error) {
-    console.error(error.response?.data || error.message);
-    alert(error.response?.data?.message || "Failed to create milestone");
-  }
-};
-
-
+  };
 
   /* ---------- SECTION ---------- */
 
   const Section = ({ id, title, children }) => (
-    <div className="border rounded-xl shadow-sm overflow-hidden">
+    <div className="border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition">
       <button
         type="button"
         onClick={() => setOpen(open === id ? "" : id)}
-        className="w-full flex justify-between items-center px-6 py-4 bg-gray-50"
+        className={`w-full flex justify-between items-center px-6 py-4 transition
+          ${open === id ? "bg-green-50" : "bg-gray-50 hover:bg-gray-100"}`}
       >
         <h2 className="font-semibold text-lg">{title}</h2>
-        <span className="text-xl">{open === id ? "−" : "+"}</span>
+        <span
+          className={`text-xl transition-transform duration-200 ${
+            open === id ? "rotate-180" : ""
+          }`}
+        >
+          {open === id ? "−" : "+"}
+        </span>
       </button>
 
-      {open === id && <div className="p-6 bg-white">{children}</div>}
+      {open === id && (
+        <div className="p-6 bg-white animate-fadeIn">{children}</div>
+      )}
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 flex justify-center">
+    <div className={`${inter.className} min-h-screen bg-gray-100 py-10 px-4 flex justify-center`}>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-6xl bg-white rounded-2xl shadow-xl p-8 space-y-8"
+        className="w-full max-w-6xl bg-white rounded-3xl shadow-xl p-10 space-y-10"
       >
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Create Milestone</h1>
+        {/* HEADER */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Create Milestone</h1>
+          <p className="text-gray-500 text-sm">
+            Define milestone scope, schedule and payment details
+          </p>
         </div>
 
         {/* BASIC */}
@@ -157,19 +168,21 @@ const handleSubmit = async (e) => {
           <Grid>
             <Input label="Planned Date" name="planned_date" type="date" value={form.planned_date} onChange={handleChange} />
             <Input label="Actual Date" name="actual_date" type="date" value={form.actual_date} onChange={handleChange} />
-            <Input label="Date Variance" name="date_variance_days" type="number" value={form.date_variance_days} onChange={handleChange} />
+            <Input label="Date Variance (days)" name="date_variance_days" type="number" value={form.date_variance_days} onChange={handleChange} />
           </Grid>
         </Section>
 
         {/* FINANCIAL */}
         <Section id="financial" title="Financial Details">
-          <Grid>
-            <Input label="Base Amount" name="base_amount" value={form.base_amount} onChange={handleChange} />
-            <Input label="Tax %" name="tax_percentage" value={form.tax_percentage} onChange={handleChange} />
-            <Input label="Tax Amount" name="tax_amount" value={form.tax_amount} onChange={handleChange} />
-            <Input label="Total Amount" name="total_amount" value={form.total_amount} onChange={handleChange} />
-            <Input label="% of Budget" name="percentage_of_budget" value={form.percentage_of_budget} onChange={handleChange} />
-          </Grid>
+          <div className="bg-green-50 p-4 rounded-xl">
+            <Grid>
+              <Input label="Base Amount" name="base_amount" value={form.base_amount} onChange={handleChange} />
+              <Input label="Tax %" name="tax_percentage" value={form.tax_percentage} onChange={handleChange} />
+              <Input label="Tax Amount" name="tax_amount" value={form.tax_amount} onChange={handleChange} />
+              <Input label="Total Amount" name="total_amount" value={form.total_amount} onChange={handleChange} />
+              <Input label="% of Budget" name="percentage_of_budget" value={form.percentage_of_budget} onChange={handleChange} />
+            </Grid>
+          </div>
         </Section>
 
         {/* PAYMENT */}
@@ -209,8 +222,12 @@ const handleSubmit = async (e) => {
           </Grid>
         </Section>
 
+        {/* CTA */}
         <div className="flex justify-center pt-6">
-          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-16 py-3 rounded-2xl font-semibold">
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:shadow-xl hover:-translate-y-0.5 transition text-white px-20 py-3 rounded-2xl font-semibold"
+          >
             Save Milestone
           </button>
         </div>
@@ -222,21 +239,25 @@ const handleSubmit = async (e) => {
 /* ---------- REUSABLE COMPONENTS ---------- */
 
 const Grid = ({ children }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{children}</div>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {children}
+  </div>
 );
 
 function Input({ label, name, type = "text", required, value, onChange }) {
   return (
     <div className="flex flex-col">
       <label className="text-sm font-medium mb-1">
-        {label}{required && <span className="text-red-500 ml-1">*</span>}
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <input
         name={name}
         type={type}
         value={value}
         onChange={onChange}
-        className="border rounded-lg px-4 py-2"
+        className="border border-gray-300 rounded-xl px-4 py-3 text-sm
+        focus:ring-2 focus:ring-green-500 focus:outline-none transition"
       />
     </div>
   );
@@ -251,7 +272,8 @@ function Textarea({ label, name, value, onChange }) {
         value={value}
         onChange={onChange}
         rows={3}
-        className="border rounded-lg px-4 py-2"
+        className="border border-gray-300 rounded-xl px-4 py-3 text-sm bg-gray-50
+        focus:ring-2 focus:ring-green-500 focus:outline-none transition resize-none"
       />
     </div>
   );
@@ -261,9 +283,17 @@ function Select({ label, name, options, value, onChange }) {
   return (
     <div className="flex flex-col">
       <label className="text-sm font-medium mb-1">{label}</label>
-      <select name={name} value={value} onChange={onChange} className="border rounded-lg px-4 py-2">
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="border border-gray-300 rounded-xl px-4 py-3 text-sm
+        focus:ring-2 focus:ring-green-500 focus:outline-none transition"
+      >
         {options.map((opt) => (
-          <option key={opt} value={opt}>{opt}</option>
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
         ))}
       </select>
     </div>

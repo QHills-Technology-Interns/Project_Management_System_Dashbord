@@ -6,38 +6,49 @@ import {
   ProjectProvider,
   useProject,
 } from "../../../../context/ProjectContext";
+import { Inter } from "next/font/google";
+
+/* ---------------- FONT CONFIG ---------------- */
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const API_BASE = "https://ceo-dashboard-8052.onrender.com/api/expenses";
 
 /* ---------------- STATUS CONFIG ---------------- */
 const statusConfig = {
   Pending: {
-    icon: <Clock size={16} />,
+    icon: <Clock size={18} />,
     percent: 30,
     color: "bg-yellow-400",
     text: "Waiting for payment",
     textColor: "text-yellow-600",
+    ring: "ring-yellow-300",
   },
   Paid: {
-    icon: <CheckCircle size={16} />,
+    icon: <CheckCircle size={18} />,
     percent: 100,
     color: "bg-green-500",
     text: "Payment completed",
     textColor: "text-green-600",
+    ring: "ring-green-300",
   },
   Cancelled: {
-    icon: <Ban size={16} />,
+    icon: <Ban size={18} />,
     percent: 0,
     color: "bg-gray-400",
     text: "Payment cancelled",
     textColor: "text-gray-500",
+    ring: "ring-gray-300",
   },
   Rejected: {
-    icon: <XCircle size={16} />,
+    icon: <XCircle size={18} />,
     percent: 0,
     color: "bg-red-500",
     text: "Payment rejected",
     textColor: "text-red-600",
+    ring: "ring-red-300",
   },
 };
 
@@ -118,24 +129,27 @@ function CreateExpenseForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow p-6 space-y-6">
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+    <div
+      className={`${inter.className} max-w-3xl mx-auto bg-white rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.06)] p-10 space-y-8`}
+    >
       {/* HEADER */}
       <div>
-        <h2 className="text-xl font-semibold">New Expense</h2>
-        <p className="text-sm text-gray-500">
-          Submit expense for Project ID: {projectId || "—"}
+        <h2 className="text-2xl font-semibold tracking-tight">New Expense</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Submit expense for Project ID — {projectId || "—"}
         </p>
       </div>
 
       {/* CATEGORY & DATE */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-5">
         <div className="flex flex-col">
           <label className="text-sm font-medium mb-1">Category</label>
           <select
             name="category"
             value={form.category}
             onChange={handleChange}
-            className="rounded-xl border px-4 py-3 text-sm"
+            className="rounded-xl border px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
           >
             <option value="">Select category</option>
             <option>Travel</option>
@@ -154,23 +168,26 @@ function CreateExpenseForm() {
             name="date"
             value={form.date}
             onChange={handleChange}
-            className="rounded-xl border px-4 py-3 text-sm"
+            className="rounded-xl border px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
           />
         </div>
       </div>
 
       {/* AMOUNT & CURRENCY */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-5">
         <div className="flex flex-col">
           <label className="text-sm font-medium mb-1">Amount</label>
-          <input
-            type="number"
-            name="amount"
-            value={form.amount}
-            onChange={handleChange}
-            placeholder="Amount"
-            className="rounded-xl border px-4 py-3 text-sm"
-          />
+          <div className="flex items-center border rounded-xl px-4 focus-within:ring-2 focus-within:ring-green-500 transition">
+            <span className="text-gray-500 mr-2">₹</span>
+            <input
+              type="number"
+              name="amount"
+              value={form.amount}
+              onChange={handleChange}
+              placeholder="Amount"
+              className="w-full py-3 text-sm outline-none"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col">
@@ -179,7 +196,7 @@ function CreateExpenseForm() {
             name="currency"
             value={form.currency}
             onChange={handleChange}
-            className="rounded-xl border px-4 py-3 text-sm"
+            className="rounded-xl border px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
           >
             <option>INR</option>
             <option>USD</option>
@@ -195,19 +212,20 @@ function CreateExpenseForm() {
           value={form.vendor}
           onChange={handleChange}
           placeholder="Vendor name"
-          className="rounded-xl border px-4 py-3 text-sm"
+          className="rounded-xl border px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
         />
       </div>
 
       {/* STATUS */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium mb-2">Payment Status</label>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <label className="text-sm font-medium mb-3">Payment Status</label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.entries(statusConfig).map(([key, value]) => (
             <StatusCard
               key={key}
               label={key}
               icon={value.icon}
+              ring={value.ring}
               active={form.status}
               onClick={selectStatus}
             />
@@ -217,13 +235,15 @@ function CreateExpenseForm() {
 
       {/* PROGRESS */}
       <div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className={`h-full ${progress.color}`}
+            className={`h-full ${progress.color} transition-all duration-500`}
             style={{ width: `${progress.percent}%` }}
           />
         </div>
-        <p className={`text-xs mt-1 ${progress.textColor}`}>{progress.text}</p>
+        <p className={`text-xs mt-2 ${progress.textColor}`}>
+          {progress.text}
+        </p>
       </div>
 
       {/* DESCRIPTION */}
@@ -233,9 +253,9 @@ function CreateExpenseForm() {
           name="description"
           value={form.description}
           onChange={handleChange}
-          rows={4}
+          rows={3}
           placeholder="Description"
-          className="w-full rounded-xl border px-4 py-3 text-sm"
+          className="w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition resize-none"
         />
       </div>
 
@@ -248,7 +268,7 @@ function CreateExpenseForm() {
           onChange={handleChange}
           rows={3}
           placeholder="Notes"
-          className="w-full rounded-xl border px-4 py-3 text-sm"
+          className="w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition resize-none"
         />
       </div>
 
@@ -259,28 +279,29 @@ function CreateExpenseForm() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50"
+          className="px-8 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-medium shadow-md hover:shadow-lg hover:-translate-y-0.5 transition disabled:opacity-50 disabled:transform-none"
         >
           {loading ? "Submitting..." : "Submit Expense →"}
         </button>
       </div>
     </div>
+    </div>
   );
 }
 
 /* ---------------- STATUS CARD ---------------- */
-function StatusCard({ label, icon, active, onClick }) {
+function StatusCard({ label, icon, active, ring, onClick }) {
   const isActive = active === label;
 
   return (
     <button
       type="button"
       onClick={() => onClick(label)}
-      className={`border rounded-xl px-4 py-3 text-sm flex flex-col gap-1
+      className={`rounded-full px-4 py-3 text-sm flex flex-col items-center gap-1 transition
         ${
           isActive
-            ? "border-green-500 bg-green-50 text-green-700"
-            : "border-gray-200 hover:bg-gray-50"
+            ? `bg-green-50 text-green-700 ring-2 ${ring}`
+            : "border border-gray-200 hover:bg-gray-50"
         }`}
     >
       {icon}
